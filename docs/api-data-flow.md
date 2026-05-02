@@ -1,6 +1,6 @@
 ## API Data Flow
 
-### POST /api/auth/bootstrap-user
+### POST /api/auth/bootstrap-user 
 **Purpose:** Create the first API user (one-time operation).
 
 ```

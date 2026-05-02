@@ -29,7 +29,12 @@ jobs:
         run: dotnet build WeatherAPI.slnx --configuration Release --no-restore
 
       - name: Publish API
-        run: dotnet publish WeatherAPI/WeatherAPI.csproj --configuration Release --no-build --output ./publish
+        run: dotnet publish WeatherAPI/WeatherAPI.csproj --configuration Release --no-build --output ./publish /p:UseAppHost=false
+
+      - name: Create deployment package
+        run: |
+          cd publish
+          zip -r ../weatherapi.zip .
 
       - name: Deploy to Azure Web App
         if: env.AZURE_WEBAPP_PUBLISH_PROFILE != ''
@@ -37,4 +42,4 @@ jobs:
         with:
           app-name: mf-weatherapi
           publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
+          package: ./weatherapi.zip

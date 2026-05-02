@@ -1,0 +1,104 @@
+@host = https://localhost:7296
+@username = api-user
+@password = api-password
+@bearerToken = paste-token-here
+@sampleSubscriptionId = 00000000-0000-0000-0000-000000000000
+
+############################################################
+# WeatherAPI Endpoint Listing
+#
+# How to use:
+# 1) Start API: dotnet run --project WeatherAPI/WeatherAPI.csproj
+# 2) Request a token from /api/auth/token using @username and @password.
+# 3) Copy accessToken from response to @bearerToken.
+# 4) Execute protected route requests.
+############################################################
+
+############################################################
+# Authentication
+############################################################
+
+# POST /api/auth/token
+# Function: Exchange API username/password for JWT bearer token.
+# Auth: Public
+POST {{host}}/api/auth/token
+Content-Type: application/json
+Accept: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+
+############################################################
+# Health + Swagger
+############################################################
+
+# Function: Liveness check.
+# Auth: Public
+GET {{host}}/health/live
+Accept: application/json
+
+###
+
+# Function: Readiness check (includes database connectivity).
+# Auth: Public
+GET {{host}}/health/ready
+Accept: application/json
+
+###
+
+# Function: Swagger UI landing page.
+# Auth: Public
+GET {{host}}/
+Accept: text/html
+
+###
+
+############################################################
+# Stations
+############################################################
+
+# GET /api/stations
+# Function: List all known weather stations in local database.
+# Auth: Protected (Bearer Token)
+GET {{host}}/api/stations
+Authorization: Bearer {{bearerToken}}
+Accept: application/json
+
+###
+
+############################################################
+# Weather
+############################################################
+
+# GET /api/weather/current
+# Function: Return latest readings for all 5 metrics by station id.
+# Auth: Protected (Bearer Token)
+# Required query: stationId
+GET {{host}}/api/weather/current?stationId=S108
+Authorization: Bearer {{bearerToken}}
+Accept: application/json
+
+###
+
+# GET /api/weather/historical
+# Function: Return historical readings for one metric across the selected whole day.
+# Auth: Protected (Bearer Token)
+# Required query: stationId, metric, date
+GET {{host}}/api/weather/historical?stationId=S108&metric=AirTemperature&date=2026-05-01
+Authorization: Bearer {{bearerToken}}
+Accept: application/json
+
+###
+
+# GET /api/weather/forecast
+# Function: Return 4-day weather outlook.
+# Auth: Protected (Bearer Token)
+GET {{host}}/api/weather/forecast
+Authorization: Bearer {{bearerToken}}
+Accept: application/json
+
+###
